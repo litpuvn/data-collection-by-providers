@@ -12,6 +12,18 @@ var svg = d3.select('body').select('#container').append('svg')
         .attr("height", svgHeight)
 ;
 
+var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+svg.append('circle')
+    .attr('cx', svgWidth / 2)
+    .attr('cy', svgHeight / 2)
+    .attr('r', outerRadius + 10)
+    .style("stroke", colorFunction(0))
+    .style("stroke-width", 10)
+    .style("fill", 'none')
+;
+
 var companies = ["Facebook", "Google", "Amazon", "Yahoo"];
 
 var arc = d3.arc()
@@ -29,7 +41,6 @@ var startingAngle = 0;
 var endAngle = 2*Math.PI / companies.length;
 
 
-var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
 
 for(var i=0; i< companies.length; i++) {
 
@@ -47,7 +58,7 @@ for(var i=0; i< companies.length; i++) {
     startingAngle = endAngle;
     arcGroup
         .append("path")
-        .style("fill", colorFunction(i))
+        .style("fill", colorFunction(i + 1))
         .attr("d", arc)
     ;
 }
