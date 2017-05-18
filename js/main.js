@@ -73,7 +73,7 @@ companies.forEach(function (com) {
         .endAngle(endAngle - angleOffset)
     ;
 
-    com.center = calculateCentroid(0, 0, startingAngle, endAngle - angleOffset, innerRadius - 30);
+    com.center = calculateCentroid(0, 0, startingAngle, endAngle - angleOffset, innerRadius - 10);
 
     startingAngle = endAngle;
 
