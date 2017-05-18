@@ -79,6 +79,7 @@ companies.forEach(function (com) {
 
     arcGroup
         .append("path")
+        .attr("id", function(d,i) { return "companyArc_"+i; })
         .style("fill", com.color)
         .attr("d", arc)
     ;
@@ -91,6 +92,14 @@ companies.forEach(function (com) {
         .style('fill', getColorByCompany(com.name))
         .attr('cx', com.center.x)
         .attr('cy', com.center.y)
+    ;
+
+    arcGroup.append('text')
+        .attr("x", com.center.x) //Move the text from the start angle of the arc
+        .attr("dy", com.center.y) //Move the text down
+        .text(com.name)
+        // .append("textPath")
+        // .attr("xlink:href",function(d,i){return "#companyArc_"+i;})
     ;
 });
 
