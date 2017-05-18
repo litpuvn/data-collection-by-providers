@@ -110,7 +110,7 @@ console.log(companies);
 var nodes = [
     {
         id: 0,
-        name: 'node0',
+        name: 'Phone number',
         companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
     },
     {
@@ -217,6 +217,17 @@ node.selectAll('path')
     })
 ;
 
+var labels = arcGroup.selectAll('.data-label').data(nodes)
+    .enter()
+    .append('text')
+        .text(function (n) {
+            return n.name;
+        })
+          .style('font-size', 9)
+          .style('opacity', 1)
+    ;
+
+
 var simulation = d3.forceSimulation(nodes)
         .force("charge", d3.forceManyBody().strength(-104))
         .force("center", d3.forceCenter(0, 0))
@@ -236,6 +247,12 @@ function handleTick() {
         .attr("transform", (n) => {
             // console.log("setX:" + n.x + ";setY:" + n.y);
             return "translate(" + n.x + ", " + n.y + ")";
+        })
+    ;
+
+    labels
+        .attr("transform", (n) => {
+            return "translate(" + n.x + ", " + (n.y - n.radius-2) + ")";
         })
     ;
 }
