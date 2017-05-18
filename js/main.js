@@ -82,7 +82,50 @@ companies.forEach(function (com) {
         .attr("id", function(d,i) { return "companyArc_"+i; })
         .style("fill", com.color)
         .attr("d", arc)
-    ;
+        .on("mouseover", function (d) {
+
+            let c = com;
+            let companyCenter = getCompanyCenter(c.name);
+
+            nodes.forEach(function (n) {
+
+                if (n.companies.indexOf(c.name) >= 0) {
+
+                    simulation.alphaTarget(0.15).restart();
+
+                    n.cx = companyCenter.x;
+                    n.cy = companyCenter.y;
+
+
+                }
+                else {
+                    n.fx = n.x;
+                    n.fx = n.y;
+                }
+            })
+
+        })
+        .on("mouseout", function (d) {
+            let c = com;
+            let companyCenter = getCompanyCenter(c.name);
+
+            nodes.forEach(function (n) {
+
+                if (n.companies.indexOf(c.name) < 0) {
+                    n.fx = null;
+                    n.fx = null;
+                }
+
+                n.cx = n.fcx;
+                n.cy = n.fcy;
+
+            });
+
+            simulation.alphaTarget(0.15).restart();
+
+        })
+
+            ;
 
 
     arcGroup
@@ -174,12 +217,12 @@ var nodes = [
  * Calculate center for each node
  */
 nodes.forEach(function (n) {
-    n.cx = d3.mean(n.companies, function (c) {
+    n.fcx = n.cx = d3.mean(n.companies, function (c) {
         let cx = getCompanyCenter(c).x;
         return cx;
     });
 
-    n.cy = d3.mean(n.companies, function (c) {
+    n.fcy = n.cy = d3.mean(n.companies, function (c) {
         let cy = getCompanyCenter(c).y;
         return cy;
     });
