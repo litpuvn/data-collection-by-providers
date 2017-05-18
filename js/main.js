@@ -6,7 +6,6 @@ var innerRadius = 200;
 var outerRadius = 220;
 
 var angleOffset = Math.PI / 20;
-var FACEBOOK = 'facebook', GOOGLE = 'google', AMAZON = 'amazon', YAHOO = 'yahoo';
 
 var svg = d3.select('body').select('#container').append('svg')
         .attr("width", svgWidth)
@@ -181,70 +180,6 @@ ledgends.selectAll('text-legend').data(companies).enter()
         });
 
 // draw ceter of companies
-
-var nodes = [
-    {
-        id: 0,
-        name: 'Phone number',
-        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
-    },
-    {
-        id: 1,
-        name: 'node1',
-        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
-    },
-    {
-        id: 2,
-        name: 'node2',
-        companies: [AMAZON, GOOGLE, FACEBOOK]
-    },
-    {
-        id: 3,
-        name: 'node3',
-        companies: [AMAZON, GOOGLE]
-    },
-    {
-        id: 4,
-        name: 'node4',
-        companies: [AMAZON, GOOGLE]
-    },
-    {
-        id: 5,
-        name: 'node5',
-        companies: [AMAZON]
-    },
-    {
-        id: 6,
-        name: 'node6',
-        companies: [GOOGLE]
-    },
-    {
-        id: 7,
-        name: 'node7',
-        companies: [GOOGLE]
-    },
-    {
-        id: 8,
-        name: 'node8',
-        companies: [AMAZON, GOOGLE]
-    },
-    {
-        id: 9,
-        name: 'node9',
-        companies: [AMAZON, GOOGLE]
-    },
-    {
-        id: 10,
-        name: 'node10',
-        companies: [AMAZON, GOOGLE]
-    },
-    {
-        id: 11,
-        name: 'node11',
-        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
-    },
-];
-
 /**
  * Calculate center for each node
  */
