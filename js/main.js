@@ -17,6 +17,9 @@ var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
 var companies = [{name: FACEBOOK, color: colorFunction(1)}, {name: GOOGLE, color: colorFunction(2)}, {name: AMAZON, color: colorFunction(3)}, {name: YAHOO, color: colorFunction(4)}];
 
 function getColorByCompany(company) {
+    if (!!company.name) {
+        company = company.name;
+    }
     let c;
     for(let i=0; i< companies.length; i++) {
         c = companies[i];
@@ -128,25 +131,54 @@ companies.forEach(function (com) {
             ;
 
 
-    arcGroup
-        .append('circle')
-        .attr('class', 'company-center')
-        .attr('r', 3)
-        .style('fill', getColorByCompany(com.name))
-        .attr('cx', com.center.x)
-        .attr('cy', com.center.y)
-    ;
-
-    arcGroup.append('text')
-        .attr("x", com.center.x) //Move the text from the start angle of the arc
-        .attr("dy", com.center.y) //Move the text down
-        .text(com.name)
-        // .append("textPath")
-        // .attr("xlink:href",function(d,i){return "#companyArc_"+i;})
-    ;
+    // arcGroup
+    //     .append('circle')
+    //     .attr('class', 'company-center')
+    //     .attr('r', 3)
+    //     .style('fill', getColorByCompany(com.name))
+    //     .attr('cx', com.center.x)
+    //     .attr('cy', com.center.y)
+    // ;
+    //
+    // arcGroup.append('text')
+    //     .attr("x", com.center.x) //Move the text from the start angle of the arc
+    //     .attr("dy", com.center.y) //Move the text down
+    //     .text(com.name)
+    //
+    // ;
 });
 
 console.log(companies);
+
+// Add legends
+var ledgends = svg.selectAll('.company-legend').data(companies).enter()
+    .append('g')
+    .attr("class", "company-legend")
+    .attr("transform", "translate(" + 0 + "," + 80 + " )")
+    ;
+
+ledgends.selectAll('rect-legend').data(companies).enter()
+    .append('rect')
+        .attr("class", 'rect-legend')
+        .classed('background', true)
+        .attr('y', function(d, i) {return i * 20; })
+        .attr('x', svgWidth - 150)
+        .attr('height', 20)
+        .attr('width', 20 )
+        .attr('fill', function (c) {
+            let color =  getColorByCompany(c.name);
+            return color;
+        });
+
+ledgends.selectAll('text-legend').data(companies).enter()
+    .append('text')
+    .attr("class", 'text-legend')
+    .text(function (c) {
+            return c.name;
+        })
+        .attr("transform", (n, i) => {
+            return "translate(" + (svgWidth - 120) + ", " + (15 + i*20) + ")";
+        });
 
 // draw ceter of companies
 
