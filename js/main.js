@@ -75,7 +75,7 @@ companies.forEach(function (com) {
         .endAngle(endAngle - angleOffset)
     ;
 
-    com.center = calculateCentroid(0, 0, startingAngle, endAngle - angleOffset, innerRadius - 10);
+    com.center = calculateCentroid(0, 0, startingAngle, endAngle - angleOffset, innerRadius - 40);
 
     startingAngle = endAngle;
 
@@ -104,7 +104,28 @@ companies.forEach(function (com) {
                     n.fx = n.x;
                     n.fx = n.y;
                 }
-            })
+            });
+
+            node.attr('opacity', function (d) {
+                let opacity = 0.1;
+                if (d.companies.indexOf(c.name) >= 0) {
+                    opacity = 1;
+                }
+
+                return opacity;
+            });
+
+            labels.style('opacity', function (d) {
+                let opacity = 0.1;
+                if (d.companies.indexOf(c.name) >= 0) {
+                    opacity = 1;
+                }
+
+                return opacity;
+            });
+
+
+
 
         })
         .on("mouseout", function (d) {
@@ -125,6 +146,8 @@ companies.forEach(function (com) {
 
             simulation.alphaTarget(0.15).restart();
 
+            node.attr('opacity', 1);
+            labels.style('opacity', 1);
         })
 
             ;
@@ -196,6 +219,7 @@ nodes.forEach(function (n) {
 
     n.radius = 10;
     n.group = n.companies.join("-");
+    n.opacity = 1;
 });
 
 var pie = d3.pie()
@@ -242,6 +266,10 @@ node.selectAll('path')
     .append('svg:path')
     .attr('class', 'individual-data')
     .attr('d', pieArc)
+    // .style('opacity', function (d) {
+    //     debugger;
+    //     return d.opacity;
+    // })
     .style("fill", function (c) {
 
         return  getColorByCompany(c.data);
