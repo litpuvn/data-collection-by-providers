@@ -79,12 +79,12 @@ var nodes = [
     {
         id: 1,
         name: 'node1',
-        companies: [AMAZON, GOOGLE]
+        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
     },
     {
         id: 2,
         name: 'node2',
-        companies: [AMAZON, GOOGLE]
+        companies: [AMAZON, GOOGLE, FACEBOOK]
     },
     {
         id: 3,
@@ -163,30 +163,7 @@ node.selectAll('path')
     })
 ;
 
-
-// nodes.forEach(function (n) {
-//     var arc = arcGroup.selectAll(".individual-data-" + n.id)
-//         .data(pie(n.companies))
-//         .enter().append("g")
-//         .attr("class", function () {
-//             return "group-individual-data individual-data-" + n.id;
-//         })
-//         ;
-//
-//     arc.append("path")
-//         .attr("d", pieArc)
-//         .attr("fill", function(d) {
-//             return getColorByCompany(d.data);
-//         });
-// });
-
-
-
-
-
 simulation.on('tick', handleTick);
-
-var groupIndividualData = arcGroup.selectAll('.group-individual-data');
 
 function handleTick() {
     node
