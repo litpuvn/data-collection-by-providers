@@ -14,17 +14,6 @@ var svg = d3.select('body').select('#container').append('svg')
 ;
 
 var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
-
-
-svg.append('circle')
-    .attr('cx', svgWidth / 2)
-    .attr('cy', svgHeight / 2)
-    .attr('r', outerRadius + 10)
-    .style("stroke", colorFunction(0))
-    .style("stroke-width", 10)
-    .style("fill", 'none')
-;
-
 var companies = [{name: FACEBOOK, color: colorFunction(1)}, {name: GOOGLE, color: colorFunction(2)}, {name: AMAZON, color: colorFunction(3)}, {name: YAHOO, color: colorFunction(4)}];
 
 function getColorByCompany(company) {
@@ -36,6 +25,15 @@ function getColorByCompany(company) {
         }
     }
 }
+
+svg.append('circle')
+    .attr('cx', svgWidth / 2)
+    .attr('cy', svgHeight / 2)
+    .attr('r', outerRadius + 10)
+    .style("stroke", colorFunction(0))
+    .style("stroke-width", 10)
+    .style("fill", 'none')
+;
 
 var arc = d3.arc()
         .innerRadius(innerRadius)
@@ -65,15 +63,28 @@ companies.forEach(function (com) {
         .endAngle(endAngle - angleOffset)
     ;
 
+    com.center = calculateCentroid(0, 0, startingAngle, endAngle - angleOffset, innerRadius - 30);
+
     startingAngle = endAngle;
+
     arcGroup
         .append("path")
         .style("fill", com.color)
         .attr("d", arc)
     ;
+
+
+    arcGroup
+        .append('circle')
+        .attr('class', 'company-center')
+        .attr('r', 10)
+        .style('fill', getColorByCompany(com.name))
+        .attr('cx', com.center.x)
+        .attr('cy', com.center.y)
+    ;
 });
 
-
+// draw ceter of companies
 
 var nodes = [
     {
