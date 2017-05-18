@@ -103,9 +103,16 @@ companies.forEach(function (com) {
     ;
 });
 
+console.log(companies);
+
 // draw ceter of companies
 
 var nodes = [
+    {
+        id: 0,
+        name: 'node0',
+        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
+    },
     {
         id: 1,
         name: 'node1',
@@ -139,7 +146,7 @@ var nodes = [
     {
         id: 7,
         name: 'node7',
-        companies: [AMAZON, GOOGLE]
+        companies: [GOOGLE]
     },
     {
         id: 8,
@@ -155,14 +162,31 @@ var nodes = [
         id: 10,
         name: 'node10',
         companies: [AMAZON, GOOGLE]
-    }
+    },
+    {
+        id: 11,
+        name: 'node11',
+        companies: [AMAZON, GOOGLE, FACEBOOK, YAHOO]
+    },
 ];
 
-var simulation = d3.forceSimulation(nodes)
-        .force("charge", d3.forceManyBody().strength(-0.4))
-        .force("center", d3.forceCenter(0, 0))
-        .force("collision", d3.forceCollide(10))
-;
+/**
+ * Calculate center for each node
+ */
+nodes.forEach(function (n) {
+    n.cx = d3.mean(n.companies, function (c) {
+        let cx = getCompanyCenter(c).x;
+        return cx;
+    });
+
+    n.cy = d3.mean(n.companies, function (c) {
+        let cy = getCompanyCenter(c).y;
+        return cy;
+    });
+
+    n.radius = 10;
+    n.group = n.companies.join("-");
+});
 
 var pie = d3.pie()
     .sort(null)
@@ -193,13 +217,24 @@ node.selectAll('path')
     })
 ;
 
+var simulation = d3.forceSimulation(nodes)
+        .force("charge", d3.forceManyBody().strength(-104))
+        .force("center", d3.forceCenter(0, 0))
+        .force("collision", d3.forceCollide(20))
+        // .force("collide", collide)
+        // .force("clustering", clustering)
+
+    ;
 simulation.on('tick', handleTick);
 
 function handleTick() {
 
     node.each(moveTowardCompanyCenter(this.alpha()));
+    node.each(manualCollide(0.4));
+
     node
         .attr("transform", (n) => {
+            // console.log("setX:" + n.x + ";setY:" + n.y);
             return "translate(" + n.x + ", " + n.y + ")";
         })
     ;
@@ -207,10 +242,47 @@ function handleTick() {
 
 function moveTowardCompanyCenter(alpha) {
     return function(d) {
-        d.companies.forEach(function (c) {
-            let center = getCompanyCenter(c);
-            d.x += (center.x - d.x) * alpha;
-            d.y += (center.y - d.y) * alpha;
+        d.y += (d.cy - d.y) * (1-alpha) * 0.7;
+        d.x += (d.cx - d.x) * (1-alpha) * 0.7;
+    };
+}
+
+
+let
+    padding = 6, // separation between nodes
+    maxRadius = 20;
+
+// Resolve collisions between nodes.
+// Resolve collisions between nodes.
+function manualCollide(alpha) {
+    var quadtree = d3.quadtree()
+            .x((d) => d.x)
+            .y((d) => d.y)
+            .addAll(nodes)
+            ;
+    return function(d) {
+        var r = d.radius + maxRadius + padding,
+            nx1 = d.x - r,
+            nx2 = d.x + r,
+            ny1 = d.y - r,
+            ny2 = d.y + r;
+
+        quadtree.visit(function(quad, x1, y1, x2, y2) {
+
+            if (quad.data && (quad.data !== d)) {
+                var x = d.x - quad.data.x,
+                    y = d.y - quad.data.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.radius + quad.data.radius + (d.color !== quad.data.color) * padding;
+                if (l < r) {
+                    l = (l - r) / l * alpha;
+                    d.x -= x *= l;
+                    d.y -= y *= l;
+                    quad.data.x += x;
+                    quad.data.y += y;
+                }
+            }
+            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
         });
     };
 }
