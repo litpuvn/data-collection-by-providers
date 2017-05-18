@@ -16,3 +16,4 @@ function calculateCentroid(cx, cy, startAngle, endAngle, radius) {
     return {x: cx + myRadius * Math.cos(alpha), y: cy + myRadius * Math.sin(alpha)};
 
 }
+

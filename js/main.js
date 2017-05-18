@@ -26,6 +26,16 @@ function getColorByCompany(company) {
     }
 }
 
+function getCompanyCenter(company) {
+    let c;
+    for(let i=0; i< companies.length; i++) {
+        c = companies[i];
+        if (c.name == company) {
+            return c.center;
+        }
+    }
+}
+
 svg.append('circle')
     .attr('cx', svgWidth / 2)
     .attr('cy', svgHeight / 2)
@@ -77,7 +87,7 @@ companies.forEach(function (com) {
     arcGroup
         .append('circle')
         .attr('class', 'company-center')
-        .attr('r', 10)
+        .attr('r', 3)
         .style('fill', getColorByCompany(com.name))
         .attr('cx', com.center.x)
         .attr('cy', com.center.y)
@@ -110,12 +120,12 @@ var nodes = [
     {
         id: 5,
         name: 'node5',
-        companies: [AMAZON, GOOGLE]
+        companies: [AMAZON]
     },
     {
         id: 6,
         name: 'node6',
-        companies: [AMAZON, GOOGLE]
+        companies: [GOOGLE]
     },
     {
         id: 7,
@@ -177,9 +187,21 @@ node.selectAll('path')
 simulation.on('tick', handleTick);
 
 function handleTick() {
+
+    node.each(moveTowardCompanyCenter(this.alpha()));
     node
         .attr("transform", (n) => {
             return "translate(" + n.x + ", " + n.y + ")";
         })
     ;
+}
+
+function moveTowardCompanyCenter(alpha) {
+    return function(d) {
+        d.companies.forEach(function (c) {
+            let center = getCompanyCenter(c);
+            d.x += (center.x - d.x) * alpha;
+            d.y += (center.y - d.y) * alpha;
+        });
+    };
 }
