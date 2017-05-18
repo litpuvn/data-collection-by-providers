@@ -134,25 +134,55 @@ var simulation = d3.forceSimulation(nodes)
         .force("collision", d3.forceCollide(10))
 ;
 
+var pie = d3.pie()
+    .sort(null)
+    .value(function(d) {
+        return 10;
+    });
 
-arcGroup.selectAll('.individual-data').data(nodes).enter()
-    .append('circle')
-    .attr('class', 'individual-data')
-    .attr('r', 10)
-    .style("fill", function (n) {
-        return  getColorByCompany(n.companies[0]);
-    })
-;
+var pieArc = d3.arc()
+    .outerRadius(10)
+    .innerRadius(0);
 
-simulation.on('tick', handleTick);
+// arcGroup.selectAll('.individual-data').data(nodes).enter()
+//     .append('path')
+//     .attr('class', 'individual-data')
+//     .attr('r', 10)
+//     .style("fill", function (n) {
+//         return  getColorByCompany(n.companies[0]);
+//     })
+// ;
+
+
+nodes.forEach(function (n) {
+    var arc = arcGroup.selectAll(".individual-data-" + n.id)
+        .data(pie(n.companies))
+        .enter().append("g")
+        .attr("class", function () {
+            return "group-individual-data individual-data-" + n.id;
+        })
+        ;
+
+    arc.append("path")
+        .attr("d", pieArc)
+        .attr("fill", function(d) {
+            return getColorByCompany(d.data);
+        });
+});
+
+
+
+
+
+// simulation.on('tick', handleTick);
+
+var groupIndividualData = arcGroup.selectAll('.group-individual-data');
 
 function handleTick() {
-    arcGroup.selectAll('.individual-data')
-        .attr('cx', function (n) {
-            return  n.x ;
-        })
-        .attr('cy', function (n) {
-            return n.y ;
+    groupIndividualData
+        .attr("transform", (d) => {
+            debugger;
+            return "translate(" + d.data.x + ", " + d.data.y + ")";
         })
     ;
 }
