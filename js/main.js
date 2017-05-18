@@ -6,6 +6,7 @@ var innerRadius = 200;
 var outerRadius = 220;
 
 var angleOffset = Math.PI / 20;
+var FACEBOOK = 'facebook', GOOGLE = 'google', AMAZON = 'amazon', YAHOO = 'yahoo';
 
 var svg = d3.select('body').select('#container').append('svg')
         .attr("width", svgWidth)
@@ -24,7 +25,17 @@ svg.append('circle')
     .style("fill", 'none')
 ;
 
-var companies = ["Facebook", "Google", "Amazon", "Yahoo"];
+var companies = [{name: FACEBOOK, color: colorFunction(1)}, {name: GOOGLE, color: colorFunction(2)}, {name: AMAZON, color: colorFunction(3)}, {name: YAHOO, color: colorFunction(4)}];
+
+function getColorByCompany(company) {
+    let c;
+    for(let i=0; i< companies.length; i++) {
+        c = companies[i];
+        if (c.name == company) {
+            return c.color;
+        }
+    }
+}
 
 var arc = d3.arc()
         .innerRadius(innerRadius)
@@ -33,32 +44,115 @@ var arc = d3.arc()
         .endAngle(Math.PI / 2)
 ;
 
+var groupTranslateX = svgWidth / 2;
+var groupTranslateY = svgHeight / 2;
+
 var arcGroup = svg
     .append('g')
-    .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
+    .attr("transform", "translate(" + groupTranslateX + "," + groupTranslateY + ")");
 
 var startingAngle = 0;
 var endAngle = 2*Math.PI / companies.length;
 
-
-
-for(var i=0; i< companies.length; i++) {
-
+companies.forEach(function (com) {
     endAngle = startingAngle + 2*Math.PI / companies.length;
-
     startingAngle = startingAngle + angleOffset;
 
     arc = d3.arc()
-            .innerRadius(innerRadius)
-            .outerRadius(outerRadius)
-            .startAngle(startingAngle)
-            .endAngle(endAngle - angleOffset)
-        ;
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius)
+        .startAngle(startingAngle)
+        .endAngle(endAngle - angleOffset)
+    ;
 
     startingAngle = endAngle;
     arcGroup
         .append("path")
-        .style("fill", colorFunction(i + 1))
+        .style("fill", com.color)
         .attr("d", arc)
+    ;
+});
+
+
+
+var nodes = [
+    {
+        id: 1,
+        name: 'node1',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 2,
+        name: 'node2',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 3,
+        name: 'node3',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 4,
+        name: 'node4',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 5,
+        name: 'node5',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 6,
+        name: 'node6',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 7,
+        name: 'node7',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 8,
+        name: 'node8',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 9,
+        name: 'node9',
+        companies: [AMAZON, GOOGLE]
+    },
+    {
+        id: 10,
+        name: 'node10',
+        companies: [AMAZON, GOOGLE]
+    }
+];
+
+var simulation = d3.forceSimulation(nodes)
+        .force("charge", d3.forceManyBody().strength(-0.4))
+        .force("center", d3.forceCenter(0, 0))
+        .force("collision", d3.forceCollide(10))
+;
+
+
+arcGroup.selectAll('.individual-data').data(nodes).enter()
+    .append('circle')
+    .attr('class', 'individual-data')
+    .attr('r', 10)
+    .style("fill", function (n) {
+        return  getColorByCompany(n.companies[0]);
+    })
+;
+
+simulation.on('tick', handleTick);
+
+function handleTick() {
+    arcGroup.selectAll('.individual-data')
+        .attr('cx', function (n) {
+            return  n.x ;
+        })
+        .attr('cy', function (n) {
+            return n.y ;
+        })
     ;
 }
