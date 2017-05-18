@@ -137,52 +137,61 @@ var simulation = d3.forceSimulation(nodes)
 var pie = d3.pie()
     .sort(null)
     .value(function(d) {
-        return 10;
+        return 1;
     });
 
 var pieArc = d3.arc()
     .outerRadius(10)
     .innerRadius(0);
 
-// arcGroup.selectAll('.individual-data').data(nodes).enter()
-//     .append('path')
-//     .attr('class', 'individual-data')
-//     .attr('r', 10)
-//     .style("fill", function (n) {
-//         return  getColorByCompany(n.companies[0]);
-//     })
-// ;
+var node = arcGroup.selectAll('.individual-data').data(nodes)
+    .enter().append('g')
+        .attr("class", "individual-data")
+    ;
+
+node.selectAll('path')
+    .data(function(d, i) {
+        return pie(d.companies);
+    })
+    .enter()
+    .append('svg:path')
+    .attr('class', 'individual-data')
+    .attr('d', pieArc)
+    .style("fill", function (c) {
+
+        return  getColorByCompany(c.data);
+    })
+;
 
 
-nodes.forEach(function (n) {
-    var arc = arcGroup.selectAll(".individual-data-" + n.id)
-        .data(pie(n.companies))
-        .enter().append("g")
-        .attr("class", function () {
-            return "group-individual-data individual-data-" + n.id;
-        })
-        ;
-
-    arc.append("path")
-        .attr("d", pieArc)
-        .attr("fill", function(d) {
-            return getColorByCompany(d.data);
-        });
-});
-
-
+// nodes.forEach(function (n) {
+//     var arc = arcGroup.selectAll(".individual-data-" + n.id)
+//         .data(pie(n.companies))
+//         .enter().append("g")
+//         .attr("class", function () {
+//             return "group-individual-data individual-data-" + n.id;
+//         })
+//         ;
+//
+//     arc.append("path")
+//         .attr("d", pieArc)
+//         .attr("fill", function(d) {
+//             return getColorByCompany(d.data);
+//         });
+// });
 
 
 
-// simulation.on('tick', handleTick);
+
+
+simulation.on('tick', handleTick);
 
 var groupIndividualData = arcGroup.selectAll('.group-individual-data');
 
 function handleTick() {
-    groupIndividualData
-        .attr("transform", (d) => {
-            debugger;
-            return "translate(" + d.data.x + ", " + d.data.y + ")";
+    node
+        .attr("transform", (n) => {
+            return "translate(" + n.x + ", " + n.y + ")";
         })
     ;
 }
