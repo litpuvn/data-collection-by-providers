@@ -276,21 +276,21 @@ function sortNodesByCompanySize() {
     });
 }
 
-
-// draw vertical centroids
-arcGroup.selectAll('.company-sort-center').data(myNodesByCompanySize).enter()
-    .append('circle')
-    .attr('class', 'company-sort-center')
-    .attr('r', 3)
-    .style('fill', '#000000')
-    .style('opacity', 0.4)
-    .attr('cx', function (n) {
-        return n.center.x;
-    })
-    .attr('cy', function (n) {
-        return n.center.y;
-    })
-;
+//
+// // draw vertical centroids
+// arcGroup.selectAll('.company-sort-center').data(myNodesByCompanySize).enter()
+//     .append('circle')
+//     .attr('class', 'company-sort-center')
+//     .attr('r', 3)
+//     .style('fill', '#000000')
+//     .style('opacity', 0.4)
+//     .attr('cx', function (n) {
+//         return n.center.x;
+//     })
+//     .attr('cy', function (n) {
+//         return n.center.y;
+//     })
+// ;
 
 var pie = d3.pie()
     .sort(null)
