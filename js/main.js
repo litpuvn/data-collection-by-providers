@@ -44,11 +44,19 @@ function getCompanyCenter(company) {
 svg.append('circle')
     .attr('cx', svgWidth / 2)
     .attr('cy', svgHeight / 2)
-    .attr('r', outerRadius + 10)
+    .attr('r', outerRadius + 12)
     .style("stroke", '#000000')
     .style("opacity", 0.4)
     .style("stroke-dasharray", ("10,3")) // make the stroke dashed
     .style("stroke-width", 2)
+    .style("fill", 'none')
+;
+
+svg.append('circle')
+    .attr('cx', svgWidth / 2)
+    .attr('cy', svgHeight / 2)
+    .attr('r', outerRadius + 10)
+    .style("opacity", 0.4)
     .style("fill", '#000000')
     .style("opacity", 0.01)
     .on('click', sortNodesByCompanySize)
