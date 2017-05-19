@@ -16,6 +16,7 @@ var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
 var companies = [{name: FACEBOOK, color: colorFunction(1)}, {name: GOOGLE, color: colorFunction(2)}, {name: AMAZON, color: colorFunction(3)}, {name: YAHOO, color: colorFunction(4)}];
 
 var groupNodeBySharedCompanySize = {};
+var totalCompanySize = 0;
 
 function getColorByCompany(company) {
     if (!!company.name) {
@@ -48,7 +49,9 @@ svg.append('circle')
     .style("opacity", 0.4)
     .style("stroke-dasharray", ("10,3")) // make the stroke dashed
     .style("stroke-width", 2)
-    .style("fill", 'none')
+    .style("fill", '#000000')
+    .style("opacity", 0.01)
+    .on('click', sortNodesByCompanySize)
 ;
 
 var arc = d3.arc()
@@ -233,20 +236,61 @@ nodes.forEach(function (n) {
 
     if (!groupNodeBySharedCompanySize.hasOwnProperty(n.companies.length))  {
         groupNodeBySharedCompanySize[n.companies.length] = [];
+        totalCompanySize ++;
     }
 
     let tmp = groupNodeBySharedCompanySize[n.companies.length];
     tmp.push(n);
 });
 
-let companyGroup;
-// for(let companySize in groupNodeBySharedCompanySize) {
-//     if (!groupNodeBySharedCompanySize.hasOwnProperty(companySize)) {
-//         continue;
-//     }
-//
-//     companyGroup =
-// }
+let companyGroupItem;
+var myNodesByCompanySize = [];
+for(let companySize in groupNodeBySharedCompanySize) {
+    if (!groupNodeBySharedCompanySize.hasOwnProperty(companySize)) {
+        continue;
+    }
+
+    companyGroupItem = groupNodeBySharedCompanySize[companySize];
+    myNodesByCompanySize.push({size: companySize, nodes: companyGroupItem})
+}
+
+myNodesByCompanySize.sort(function (node1, node2) {
+   return node2.size - node1.size;
+});
+
+let step = (2*innerRadius) / (1+totalCompanySize);
+myNodesByCompanySize.forEach(function (n, i) {
+    n.center = {x: 0, y: 0 - innerRadius + (i + 1) * step};
+});
+
+function sortNodesByCompanySize() {
+    simulation.alphaTarget(0.15).restart();
+
+    nodes.forEach(function (n) {
+        myNodesByCompanySize.forEach(function (centerNode) {
+            if (centerNode.size == n.companies.length) {
+                n.cx = centerNode.center.x;
+                n.cy = centerNode.center.y;
+            }
+        });
+    });
+}
+
+
+// draw vertical centroids
+arcGroup.selectAll('.company-sort-center').data(myNodesByCompanySize).enter()
+    .append('circle')
+    .attr('class', 'company-sort-center')
+    .attr('r', 3)
+    .style('fill', '#000000')
+    .style('opacity', 0.4)
+    .attr('cx', function (n) {
+        return n.center.x;
+    })
+    .attr('cy', function (n) {
+        return n.center.y;
+    })
+;
 
 var pie = d3.pie()
     .sort(null)
