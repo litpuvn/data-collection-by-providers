@@ -127,10 +127,6 @@ companies.forEach(function (com) {
 
                 return opacity;
             });
-
-
-
-
         })
         .on("mouseout", function (d) {
             let c = com;
@@ -153,8 +149,18 @@ companies.forEach(function (com) {
             node.attr('opacity', 1);
             labels.style('opacity', 1);
         })
+        // .on('click', function (d) {
+        //
+        //     let c = com;
+        //     c.selected = !c.selected;
+        //
+        //     d3.select(this)
+        //         .style('stroke-width', c.selected ? 1 : 0)
+        //         .style('stroke', '#000000')
+        //     ;
+        // })
 
-            ;
+    ;
 
 
     // arcGroup
