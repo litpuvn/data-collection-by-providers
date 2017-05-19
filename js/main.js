@@ -15,6 +15,8 @@ var svg = d3.select('body').select('#container').append('svg')
 var colorFunction = d3.scaleOrdinal(d3.schemeCategory10);
 var companies = [{name: FACEBOOK, color: colorFunction(1)}, {name: GOOGLE, color: colorFunction(2)}, {name: AMAZON, color: colorFunction(3)}, {name: YAHOO, color: colorFunction(4)}];
 
+var groupNodeBySharedCompanySize = {};
+
 function getColorByCompany(company) {
     if (!!company.name) {
         company = company.name;
@@ -42,8 +44,10 @@ svg.append('circle')
     .attr('cx', svgWidth / 2)
     .attr('cy', svgHeight / 2)
     .attr('r', outerRadius + 10)
-    .style("stroke", colorFunction(0))
-    .style("stroke-width", 10)
+    .style("stroke", '#000000')
+    .style("opacity", 0.4)
+    .style("stroke-dasharray", ("10,3")) // make the stroke dashed
+    .style("stroke-width", 2)
     .style("fill", 'none')
 ;
 
@@ -220,7 +224,23 @@ nodes.forEach(function (n) {
     n.radius = 10;
     n.group = n.companies.join("-");
     n.opacity = 1;
+
+    if (!groupNodeBySharedCompanySize.hasOwnProperty(n.companies.length))  {
+        groupNodeBySharedCompanySize[n.companies.length] = [];
+    }
+
+    let tmp = groupNodeBySharedCompanySize[n.companies.length];
+    tmp.push(n);
 });
+
+let companyGroup;
+// for(let companySize in groupNodeBySharedCompanySize) {
+//     if (!groupNodeBySharedCompanySize.hasOwnProperty(companySize)) {
+//         continue;
+//     }
+//
+//     companyGroup =
+// }
 
 var pie = d3.pie()
     .sort(null)
@@ -238,7 +258,7 @@ var node = arcGroup.selectAll('.individual-data').data(nodes)
     .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
-        .on("end", dragended));
+        .on("end", dragended))
 ;
 
 function dragstarted(d) {
